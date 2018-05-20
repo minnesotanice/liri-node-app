@@ -20,27 +20,6 @@ var client = new Twitter(keys.twitter);
 var Spotify = new Spotify(keys.spotify);
 
 
-
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-// Make it so liri.js can take in one of the following commands:
-// * `my-tweets`
-// * `spotify-this-song`
-// * `movie-this`
-// * `do-what-it-says`
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-// ### What Each Command Should Do
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-// 1. `node liri.js my-tweets`
-
-//    * This will show your last 20 tweets and when they were created at in your terminal/bash window.
-
 var command = process.argv[2];
 var parameter = process.argv[3];
 
@@ -93,17 +72,31 @@ function fetchTwitter() {
 		if (tweetsLength > 20) {
 			tweetsLength = 20;
 		}
-		for (var i = 0; i < tweetsLength; i++) {
+		// for (var i = 0; i < tweetsLength; i++) {
 
-			console.log(
-				`\n`,
-				`Tweet`,(i + 1),`created on: ${tweets[i].created_at}`,
-				`\n`,
-				`\"${tweets[i].text}\"`,
-				`\n`
-			);
+		// console.log(
+		// 	`\n`,
+		// 	`Tweet`, (i + 1), `created on: ${tweets[i].created_at}`,
+		// 	`\n`,
+		// 	`\"${tweets[i].text}\"`,
+		// 	`\n`
+		// );
+		// }
+
+		for (var i = 0; i < tweetsLength; i++) {
+			var tweetCount = (i + 1);
+			var tweetResults = 
+`\nTweet ${tweetCount} created on: ${tweets[i].created_at}
+\"${tweets[i].text}\"\n`;
+
+			console.log(tweetResults);
+			appendFile(tweetResults);
 
 		}
+
+
+
+
 	});
 }
 
@@ -120,17 +113,27 @@ function fetchSpotify(parameter) {
 			return console.log('Error occurred: ' + err);
 		}
 
-		console.log(
-			`\n`,
-			`Artist(s): ${data.tracks.items[0].artists[0].name}`,
-			`\n`,
-			`Song Name: ${data.tracks.items[0].name}`,
-			`\n`,
-			`Preview Link for Song: ${data.tracks.items[0].external_urls.spotify}`,
-			`\n`,
-			`Album: ${data.tracks.items[0].album.name}`,
-			`\n`,
-		);
+		// console.log(
+		// 	`\n`,
+		// 	`Artist(s): ${data.tracks.items[0].artists[0].name}`,
+		// 	`\n`,
+		// 	`Song Name: ${data.tracks.items[0].name}`,
+		// 	`\n`,
+		// 	`Preview Link for Song: ${data.tracks.items[0].external_urls.spotify}`,
+		// 	`\n`,
+		// 	`Album: ${data.tracks.items[0].album.name}`,
+		// 	`\n`,
+		// );
+
+		var spotifyResults = `
+Artist(s): ${data.tracks.items[0].artists[0].name}
+Song Name: ${data.tracks.items[0].name}
+Preview Link for Song: ${data.tracks.items[0].external_urls.spotify}
+Album: ${data.tracks.items[0].album.name}
+			`;
+
+		console.log(spotifyResults);
+		appendFile(spotifyResults);
 
 	});
 };
@@ -157,29 +160,46 @@ function fetchOMDB(parameter) {
 
 		var movie = JSON.parse(body);
 
-		console.log(
-			`\n`,
-			`Title: ${movie.Title}`,
-			`\n`,
-			`Year: ${movie.Year}`,
-			`\n`,
-			`IMDB Rating: ${(movie.Ratings[0]) ? (movie.Ratings[0].Value) : "N/A"}`,
-			"\n",
-			`Rotten Tomatoes Rating: ${(movie.Ratings[0]) ? (movie.Ratings[1].Value) : "N/A"}`,
-			"\n",
-			`Country: ${movie.Country}`,
-			`\n`,
-			`Language: ${movie.Language}`,
-			`\n`,
-			`Plot: ${movie.Plot}`,
-			`\n`,
-			`Actors: ${movie.Actors}`,
-			`\n`,
-		);
+		// console.log(
+		// 	`\n`,
+		// 	`Title: ${movie.Title}`,
+		// 	`\n`,
+		// 	`Year: ${movie.Year}`,
+		// 	`\n`,
+		// 	`IMDB Rating: ${(movie.Ratings[0]) ? (movie.Ratings[0].Value) : "N/A"}`,
+		// 	`\n`,
+		// 	`Rotten Tomatoes Rating: ${(movie.Ratings[0]) ? (movie.Ratings[1].Value) : "N/A"}`,
+		// 	`\n`,
+		// 	`Country: ${movie.Country}`,
+		// 	`\n`,
+		// 	`Language: ${movie.Language}`,
+		// 	`\n`,
+		// 	`Plot: ${movie.Plot}`,
+		// 	`\n`,
+		// 	`Actors: ${movie.Actors}`,
+		// 	`\n`,
+		// );
+
+
+
+		var movieResults = `
+Title: ${movie.Title}
+Year: ${movie.Year}
+IMDB Rating: ${(movie.Ratings[0]) ? (movie.Ratings[0].Value) : NA}
+Rotten Tomatoes Rating: ${(movie.Ratings[0]) ? (movie.Ratings[1].Value) : NA}
+Country: ${movie.Country}
+Language: ${movie.Language}
+Plot: ${movie.Plot}
+Actors: ${movie.Actors}
+`;
+
+		console.log(movieResults);
+		appendFile(movieResults);
 
 	});
 
-	appendFile();
+	// append file test
+	//appendFile(this);
 
 };
 
@@ -192,12 +212,12 @@ function fetchOMDB(parameter) {
 //      * Feel free to change the text in that document to test out the feature for other commands.
 
 function fetchRandom() {
-	
+
 	fs.readFile("random.txt", "utf8", function (err, fileContent) {
 
 		if (err) {
-            return console.log(err);
-        }
+			return console.log(err);
+		}
 
 		// console.log(fileContent);
 
@@ -215,23 +235,11 @@ function fetchRandom() {
 	});
 };
 
-// ### BONUS
-
-// * In addition to logging the data to your terminal/bash window, output the data to a .txt file called `log.txt`.
-
-// * Make sure you append each command you run to the `log.txt` file. 
-
-// * Do not overwrite your file each time you run a command.
-function appendFile() {
-
-	
-	console.log(
-		command,
-		parameter,
-	);
+// Output the data to a .txt file called `log.txt`. Append each command to the `log.txt` file. 
+function appendFile(data) {
 
 	//Output all that happens into a log.txt file
-	fs.appendFile("log.txt", command, function (err) {
+	fs.appendFile("log.txt", data, function (err) {
 
 		//If an error happens while trying to write to the file
 		if (err) {
